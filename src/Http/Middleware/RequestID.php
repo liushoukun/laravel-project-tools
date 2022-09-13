@@ -12,7 +12,8 @@ class RequestID
     public function handle(Request $request, Closure $next)
     {
         $requestID = self::buildRequestID($request);
-        $request->header('x-request-id', $requestID);
+        $request->headers->set('x-request-id', $requestID);
+
         Log::withContext([
                              'request-id' => $requestID
                          ]);

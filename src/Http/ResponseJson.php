@@ -52,6 +52,7 @@ trait ResponseJson
             'date'        => date('Y-m-d H:i:s'),
             'errors'      => $errors,
             'status_code' => $status_code,
+            'request_id'=> request()->header('x-request-id')
         ];
         return response()->json($data, $status_code);
     }
