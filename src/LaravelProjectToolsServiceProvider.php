@@ -2,9 +2,10 @@
 
 namespace Liushoukun\LaravelProjectTools;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
-use Liushoukun\LaravelProjectTools\Http\Middleware\RequestID;
+use Liushoukun\LaravelProjectTools\Http\Middleware\RequestIDMiddleware;
 
 class LaravelProjectToolsServiceProvider extends ServiceProvider
 {
@@ -28,15 +29,17 @@ class LaravelProjectToolsServiceProvider extends ServiceProvider
     }
 
     public array $middlewares = [
-        'request-id' => RequestID::class
+        'request-id' => RequestIDMiddleware::class
     ];
 
     public function aliasMiddleware() : void
     {
-        $router = $this->app->make(Router::class);
-
-        foreach ($this->middlewares as $alise => $middleware) {
-            $router->aliasMiddleware($alise, $middleware);
+        try {
+            $router = $this->app->make(Router::class);
+            foreach ($this->middlewares as $alise => $middleware) {
+                $router->aliasMiddleware($alise, $middleware);
+            }
+        } catch (BindingResolutionException $e) {
         }
     }
 

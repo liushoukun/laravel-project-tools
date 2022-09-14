@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class RequestID
+class RequestIDMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
