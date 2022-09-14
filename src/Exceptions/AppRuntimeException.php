@@ -7,15 +7,22 @@
 // | TITLE: todo?
 // +----------------------------------------------------------------------
 
-namespace Liushoukun\LaravelProjectTools\Facades\Exceptions;
+namespace Liushoukun\LaravelProjectTools\Exceptions;
 
 
+use ReflectionClass;
 use RuntimeException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Throwable;
 
-
-abstract class AppRuntimeException extends RuntimeException implements HttpExceptionInterface, ExceptionCodePrefixInterface
+/**
+ * 业务异常
+ */
+abstract class AppRuntimeException extends RuntimeException implements HttpExceptionInterface
 {
+
+    // 通用错误码
+
 
 
     protected array     $errors;
@@ -25,12 +32,22 @@ abstract class AppRuntimeException extends RuntimeException implements HttpExcep
     public static array $errorList = [];
 
 
-    public function __construct(string $message = "", int $code = 0, array $errors = [], int $statusCode = 400, array $headers = [], mixed $data = null, ?Throwable $previous = null)
+    public function __construct($message = "", $code = 1, array $errors = [], int $statusCode = 400, array $headers = [], mixed $data = null, ?Throwable $previous = null)
     {
-        parent::__construct($message, $code, $previous);
+
+        parent::__construct($message, $this->formatCode($code), $previous);
         $this->errors     = $errors;
         $this->headers    = $headers;
         $this->statusCode = $statusCode;
+        $this->data       = $data;
+    }
+
+    public function formatCode($code) : string
+    {
+        $objClass     = new ReflectionClass($this);
+        $businessCode = $objClass->getConstant('BUSINESS_CODE') !== false ? $objClass->getConstant('BUSINESS_CODE') : null;
+        $serviceCode  = $objClass->getConstant('SERVICE_CODE') !== false ? $objClass->getConstant('SERVICE_CODE') : null;
+        return (string)((string)$businessCode . (string)$serviceCode . $code);
     }
 
 

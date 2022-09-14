@@ -8,13 +8,13 @@ trait ResponseJson
 {
 
     /**
-     * 成功响应
+     * 成功响应Json
      * @param mixed|null $data
      * @param string $message
      * @param int $statusCode
      * @return JsonResponse
      */
-    public function success(mixed $data = null, string $message = 'success', int $statusCode = 200) : JsonResponse
+    public static function successJson(mixed $data = null, string $message = 'ok', int $statusCode = 200) : JsonResponse
     {
         return self::responseJson(0, $message, $statusCode, $data, []);
     }
@@ -22,13 +22,13 @@ trait ResponseJson
     /**
      * 失败响应
      * @param string $message
-     * @param int $code
+     * @param int|string $code
      * @param int $statusCode
      * @param array $errors
      * @param mixed $data
      * @return JsonResponse
      */
-    public function error(string $message = 'error', int $code = 1, int $statusCode = 400, array $errors = [], mixed $data = null) : JsonResponse
+    public static function errorJson(string $message = 'error', int|string $code = 1, int $statusCode = 400, array $errors = [], mixed $data) : JsonResponse
     {
         return self::responseJson($code, $message, $statusCode, $data, $errors);
     }
@@ -37,24 +37,15 @@ trait ResponseJson
      * 构件构件响应
      * @param int $code
      * @param string $message
-     * @param int $status_code
+     * @param int $statusCode
      * @param mixed|null $data
      * @param array $errors
      * @return JsonResponse
      */
-    protected static function responseJson(int $code, string $message, int $status_code, mixed $data = null, array $errors = []) : JsonResponse
+    private static function responseJson(int $code, string $message, int $statusCode, mixed $data, array $errors = []) : JsonResponse
     {
-        $data = [
-            'code'        => $code,
-            'message'     => $message,
-            'data'        => $data,
-            'time'        => microtime(true) - LARAVEL_START,
-            'date'        => date('Y-m-d H:i:s'),
-            'errors'      => $errors,
-            'status_code' => $status_code,
-            'request_id'=> request()->header('x-request-id')
-        ];
-        return response()->json($data, $status_code);
+
+        return response()->json(ResponseJsonService::responseToArray($code, $message, $data, $errors), $statusCode);
     }
 
 

@@ -4,5 +4,8 @@ namespace Liushoukun\LaravelProjectTools;
 
 class LaravelProjectTools
 {
-    // Build wonderful things
+    public static function successJson()
+    {
+
+    }
 }
