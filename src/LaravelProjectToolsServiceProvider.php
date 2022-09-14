@@ -3,6 +3,7 @@
 namespace Liushoukun\LaravelProjectTools;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Liushoukun\LaravelProjectTools\Http\Middleware\RequestIDMiddleware;
@@ -20,7 +21,8 @@ class LaravelProjectToolsServiceProvider extends ServiceProvider
         // $this->loadViewsFrom(__DIR__.'/../resources/views', 'liushoukun');
         // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         // $this->loadRoutesFrom(__DIR__.'/routes.php');
-        $this->aliasMiddleware();
+
+        $this->loadMiddlewares();
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
@@ -28,9 +30,27 @@ class LaravelProjectToolsServiceProvider extends ServiceProvider
 
     }
 
+
+    public function loadMiddlewares() : LaravelProjectToolsServiceProvider
+    {
+        $this->requestIDMiddlewarePriority();
+        $this->aliasMiddleware();
+        return $this;
+    }
+
     public array $middlewares = [
         'request-id' => RequestIDMiddleware::class
     ];
+
+    public function requestIDMiddlewarePriority() : void
+    {
+        try {
+            $kernel = $this->app->make(Kernel::class);
+            $kernel->prependToMiddlewarePriority(RequestIDMiddleware::class);
+
+        } catch (BindingResolutionException $e) {
+        }
+    }
 
     public function aliasMiddleware() : void
     {
