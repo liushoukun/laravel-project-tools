@@ -2,6 +2,8 @@
 
 namespace Liushoukun\LaravelProjectTools\Http;
 
+use Throwable;
+
 class ResponseJsonService
 {
 
@@ -17,19 +19,21 @@ class ResponseJsonService
     public static function responseToArray(int|string $errorCode = 0, string $message = '', mixed $data, ?array $errors) : array
     {
         // 是否开启debug
-        $responseArray               = [
+        $responseArray = [
             'code'    => $errorCode,
             'message' => $message,
             'data'    => $data,
             'errors'  => $errors, // 错误集合
         ];
-        $responseArray['request-id'] = request()->header('x-request-id');
+        try {
+            $responseArray['request-id'] = request()->header('x-request-id');
+        } catch (Throwable $throwable) {
+            $responseArray['request-id'] = null;
+        }
         if (config('app.debug')) {
-            $responseArray['request-info']['start-time'] = LARAVEL_START;
-            $responseArray['request-info']['end-time']   = microtime(true);
-            $responseArray['request-info']['time']       = bcadd(microtime(true) - LARAVEL_START, 0, 3);
-            $responseArray['request-info']['start-date'] = date('Y-m-d H:i:s', LARAVEL_START);
-            $responseArray['request-info']['end-date']   = date('Y-m-d H:i:s', microtime(true));
+            $responseArray['debug']['start-time'] = LARAVEL_START;
+            $responseArray['debug']['end-time']   = microtime(true);
+            $responseArray['debug']['time']       = bcadd(microtime(true) - LARAVEL_START, 0, 3);
         }
         return $responseArray;
 
