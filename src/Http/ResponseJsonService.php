@@ -26,14 +26,9 @@ class ResponseJsonService
             'errors'  => $errors, // 错误集合
         ];
         try {
-            $responseArray['request-id'] = request()->header('x-request-id');
+            $responseArray['request']['request-id'] = request()->header('x-request-id');
         } catch (Throwable $throwable) {
             $responseArray['request-id'] = null;
-        }
-        if (config('app.debug')) {
-            $responseArray['debug']['start-time'] = LARAVEL_START;
-            $responseArray['debug']['end-time']   = microtime(true);
-            $responseArray['debug']['time']       = bcadd(microtime(true) - LARAVEL_START, 0, 3);
         }
         return $responseArray;
 
