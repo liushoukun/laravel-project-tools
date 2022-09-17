@@ -7,6 +7,7 @@ use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Liushoukun\LaravelProjectTools\Http\Middleware\RequestIDMiddleware;
+use Liushoukun\LaravelProjectTools\Http\Requests\RequestIDService;
 
 class LaravelProjectToolsServiceProvider extends ServiceProvider
 {
@@ -28,6 +29,7 @@ class LaravelProjectToolsServiceProvider extends ServiceProvider
             $this->bootForConsole();
         }
 
+        RequestIDService::providerBoot();
     }
 
 

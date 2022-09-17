@@ -3,20 +3,20 @@
 namespace Liushoukun\LaravelProjectTools\Http;
 
 use Illuminate\Http\JsonResponse;
+use Liushoukun\LaravelProjectTools\Http\Resources\Json\JsonResource;
 
 trait ResponseJson
 {
 
     /**
-     * 成功响应Json
+     * 成功响应
      * @param mixed|null $data
      * @param string $message
-     * @param int $statusCode
      * @return JsonResponse
      */
-    public static function successJson(mixed $data = null, string $message = 'ok', int $statusCode = 200) : JsonResponse
+    public static function successJson(mixed $data = null, string $message = 'ok') : JsonResponse
     {
-        return self::responseJson(0, $message, $statusCode, $data, []);
+        return ResponseJsonService::responseJson($data, $message, 0);
     }
 
     /**
@@ -30,22 +30,7 @@ trait ResponseJson
      */
     public static function errorJson(string $message = 'error', int|string $code = 1, int $statusCode = 400, array $errors = [], mixed $data) : JsonResponse
     {
-        return self::responseJson($code, $message, $statusCode, $data, $errors);
-    }
-
-    /**
-     * 构件构件响应
-     * @param int $code
-     * @param string $message
-     * @param int $statusCode
-     * @param mixed|null $data
-     * @param array $errors
-     * @return JsonResponse
-     */
-    private static function responseJson(int $code, string $message, int $statusCode, mixed $data, array $errors = []) : JsonResponse
-    {
-
-        return response()->json(ResponseJsonService::responseToArray($code, $message, $data, $errors), $statusCode);
+        return ResponseJsonService::responseJson($data, $message, $code, $errors)->setStatusCode($statusCode);
     }
 
 

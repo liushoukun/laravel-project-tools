@@ -2,6 +2,8 @@
 
 namespace Liushoukun\LaravelProjectTools\Http\Requests;
 
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Http\Request;
 use Jenssegers\Agent\Agent;
 use Liushoukun\LaravelProjectTools\Contracts\ClientInfo;
@@ -9,7 +11,7 @@ use Liushoukun\LaravelProjectTools\Contracts\ClientInfo;
 /**
  * 客户端信息request适配器
  */
-class ClientInfoRequestAdapter implements ClientInfo
+class ClientInfoRequestAdapter implements ClientInfo, Arrayable
 {
     /**
      *
@@ -22,15 +24,6 @@ class ClientInfoRequestAdapter implements ClientInfo
      * @var Agent
      */
     protected Agent $agent;
-
-    /**
-     * @param Request|null $request
-     * @return ClientInfoRequestAdapter
-     */
-    public static function make(?Request $request = null) : ClientInfoRequestAdapter
-    {
-        return new self($request);
-    }
 
     /**
      * @param Request|null $request
@@ -49,17 +42,26 @@ class ClientInfoRequestAdapter implements ClientInfo
     /**
      * @inheritDoc
      */
-    public function ip() : ?string
+    public function userAgent() : ?string
     {
-        return $this->request->getClientIp();
+        return $this->request->userAgent();
+    }
+
+    /**
+     * @param Request|null $request
+     * @return ClientInfoRequestAdapter
+     */
+    public static function make(?Request $request = null) : ClientInfoRequestAdapter
+    {
+        return new self($request);
     }
 
     /**
      * @inheritDoc
      */
-    public function userAgent() : ?string
+    public function ip() : ?string
     {
-        return $this->request->userAgent();
+        return $this->request->getClientIp();
     }
 
     /**
@@ -100,6 +102,22 @@ class ClientInfoRequestAdapter implements ClientInfo
     public function getAgent() : Agent
     {
         return $this->agent;
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function toArray() : array
+    {
+        return [
+            'ip'         => $this->ip(),
+            'user-agent' => $this->userAgent(),
+            'browser'    => $this->browser(),
+            'platform'   => $this->platform(),
+            'device'     => $this->device(),
+        ];
+
     }
 
 

@@ -39,6 +39,7 @@ class Handler extends ExceptionHandler
      */
     protected function convertExceptionToArray(Throwable $e) : array
     {
+
         // 如果是业务异常
         $data    = [];
         $errors  = [];
@@ -57,15 +58,15 @@ class Handler extends ExceptionHandler
             $errors  = $e->errors();
             $code    = (string)config('laravel-project-tools.exception.common_code',9999999);
         }
-        $responseArray = ResponseJsonService::responseToArray($code, $message, $data, $errors);
+        $responseData = ResponseJsonService::wrapData($data, $message, $code, $errors);
         if (config('app.debug')) {
-            $responseArray['exception']['exception'] = get_class($e);
-            $responseArray['exception']['file']      = $e->getFile();
-            $responseArray['exception']['line']      = $e->getLine();
+            $responseData['exception']['exception'] = get_class($e);
+            $responseData['exception']['file']      = $e->getFile();
+            $responseData['exception']['line']      = $e->getLine();
 //            $responseArray['exception']['previous']  = $e->getPrevious()?$this->convertExceptionToArray($e->getPrevious()):null;
-            $responseArray['exception']['trace'] = collect($e->getTrace())->map(fn($trace) => Arr::except($trace, [ 'args' ]))->all();
+            $responseData['exception']['trace'] = collect($e->getTrace())->map(fn($trace) => Arr::except($trace, [ 'args' ]))->all();
         }
-        return $responseArray;
+        return $responseData;
     }
 
 
