@@ -2,11 +2,7 @@
 
 namespace Liushoukun\LaravelProjectTools\Contracts;
 
-/**
- * 操作人
- */
-interface Operator extends User
+interface Owner extends User
 {
-
 
 }
