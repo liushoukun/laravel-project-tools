@@ -5,9 +5,12 @@ namespace Liushoukun\LaravelProjectTools;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Liushoukun\LaravelProjectTools\Http\Middleware\RequestIDMiddleware;
 use Liushoukun\LaravelProjectTools\Http\Requests\RequestIDService;
+use Throwable;
 
 class LaravelProjectToolsServiceProvider extends ServiceProvider
 {
@@ -18,6 +21,19 @@ class LaravelProjectToolsServiceProvider extends ServiceProvider
      */
     public function boot() : void
     {
+        if (app('config')->get('app.debug')) {
+            DB::listen(static function ($query) {
+                try {
+                    $sql = str_replace("?", "'%s'", $query->sql);
+                    $log = vsprintf($sql, $query->bindings ?? []);
+                } catch (Throwable $e) {
+                    $log = $query->sql;
+                }
+                Log::debug('sql:' . $log . ' time:' . $query->time);
+            });
+        }
+
+
         // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'liushoukun');
         // $this->loadViewsFrom(__DIR__.'/../resources/views', 'liushoukun');
         // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
