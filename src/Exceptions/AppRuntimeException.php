@@ -17,13 +17,14 @@ use Throwable;
 
 /**
  * 业务异常
+ * @const BUSINESS_CODE
+ * @const  SERVICE_CODE
+ * @property array $errorList 错误列表
  */
 abstract class AppRuntimeException extends RuntimeException implements HttpExceptionInterface
 {
 
     // 通用错误码
-
-
 
     protected array     $errors;
     protected int       $statusCode;
@@ -83,7 +84,15 @@ abstract class AppRuntimeException extends RuntimeException implements HttpExcep
 
     public function getHeaders() : array
     {
+
         return $this->headers;
+    }
+
+
+    public function setMessage($message = '') : static
+    {
+        $this->message = $message;
+        return $this;
     }
 
 
