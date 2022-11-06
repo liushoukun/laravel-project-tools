@@ -6,3 +6,5 @@ All notable changes to `LaravelProjectTools` will be documented in this file.
 
 ### Added
 - Everything
+
+### 测试
