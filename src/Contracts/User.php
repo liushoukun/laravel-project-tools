@@ -8,25 +8,13 @@ interface User
      * 用户类型
      * @return string|int
      */
-    public function userType() : string|int;
+    public function getUserType() : string|int;
 
     /**
-     * 用户ID
+     * 获取用户ID
      * @return int|string
      */
-    public function uid() : string|int;
+    public function getUID() : string|int;
 
-    /**
-     * 昵称
-     * @return string|null
-     */
-    public function nickname() : ?string;
-
-
-    /**
-     * 用户头像
-     * @return string|null
-     */
-    public function avatar() : ?string;
 
 }

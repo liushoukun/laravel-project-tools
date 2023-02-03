@@ -14,7 +14,7 @@ trait ResponseJson
      * @param string $message
      * @return JsonResponse
      */
-    public static function successJson(mixed $data = null, string $message = 'ok') : JsonResponse
+    public static function success(mixed $data = null, string $message = 'ok') : JsonResponse
     {
         return ResponseJsonService::responseJson($data, $message, 0);
     }
@@ -28,7 +28,7 @@ trait ResponseJson
      * @param mixed $data
      * @return JsonResponse
      */
-    public static function errorJson(string $message = 'error', int|string $code = 1, int $statusCode = 400, array $errors = [], mixed $data) : JsonResponse
+    public static function error(string $message = 'error', int|string $code = 1, int $statusCode = 400, array $errors = [], mixed $data) : JsonResponse
     {
         return ResponseJsonService::responseJson($data, $message, $code, $errors)->setStatusCode($statusCode);
     }

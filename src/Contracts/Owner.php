@@ -2,7 +2,10 @@
 
 namespace Liushoukun\LaravelProjectTools\Contracts;
 
-interface Owner extends User
+/**
+ * 所属
+ */
+interface Owner
 {
-
+    public function getOwner() : User;
 }
