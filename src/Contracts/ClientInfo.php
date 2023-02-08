@@ -2,8 +2,6 @@
 
 namespace Liushoukun\LaravelProjectTools\Contracts;
 
-use Illuminate\Contracts\Support\Arrayable;
-
 /**
  * 客户端信息
  */

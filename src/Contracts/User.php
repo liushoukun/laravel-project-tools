@@ -17,4 +17,11 @@ interface User
     public function getUID() : string|int;
 
 
+    /**
+     * 所属人
+     * @return User|null
+     */
+    public function getOwner() : User|null;
+
+
 }

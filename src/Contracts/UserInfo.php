@@ -5,7 +5,7 @@ namespace Liushoukun\LaravelProjectTools\Contracts;
 /**
  * 用户基本信息
  */
-interface UserInfo
+interface UserInfo extends User
 {
     /**
      * 昵称
