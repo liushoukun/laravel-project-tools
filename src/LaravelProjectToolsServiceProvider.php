@@ -8,30 +8,22 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
+use Liushoukun\LaravelProjectTools\Contracts\RequestIDBuildInterface;
 use Liushoukun\LaravelProjectTools\Http\Middleware\RequestIDMiddleware;
-use Liushoukun\LaravelProjectTools\Http\Requests\RequestIDService;
+use Liushoukun\LaravelProjectTools\Services\RequestIDService;
+use Liushoukun\LaravelProjectTools\Services\RequestIDBuildService;
+use Liushoukun\LaravelProjectTools\Services\SqlLogService;
 use Throwable;
 
 class LaravelProjectToolsServiceProvider extends ServiceProvider
 {
-    /**
-     * Perform post-registration booting of services.
-     *
-     * @return void
-     */
+
+    public array $middlewares = [
+        'request-id' => RequestIDMiddleware::class
+    ];
+
     public function boot() : void
     {
-        if (app('config')->get('app.debug')) {
-            DB::listen(static function ($query) {
-                try {
-                    $sql = str_replace("?", "'%s'", $query->sql);
-                    $log = vsprintf($sql, $query->bindings ?? []);
-                } catch (Throwable $e) {
-                    $log = $query->sql;
-                }
-                Log::debug('sql:' . $log . ' time:' . $query->time);
-            });
-        }
 
 
         // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'liushoukun');
@@ -45,29 +37,17 @@ class LaravelProjectToolsServiceProvider extends ServiceProvider
             $this->bootForConsole();
         }
 
-        RequestIDService::providerBoot();
-    }
 
+        RequestIDService::boot();
+        SqlLogService::boot();
+
+    }
 
     public function loadMiddlewares() : LaravelProjectToolsServiceProvider
     {
-        $this->requestIDMiddlewarePriority();
         $this->aliasMiddleware();
+        $this->requestIDMiddlewarePriority();
         return $this;
-    }
-
-    public array $middlewares = [
-        'request-id' => RequestIDMiddleware::class
-    ];
-
-    public function requestIDMiddlewarePriority() : void
-    {
-        try {
-            $kernel = $this->app->make(Kernel::class);
-            $kernel->prependToMiddlewarePriority(RequestIDMiddleware::class);
-
-        } catch (BindingResolutionException $e) {
-        }
     }
 
     public function aliasMiddleware() : void
@@ -81,29 +61,13 @@ class LaravelProjectToolsServiceProvider extends ServiceProvider
         }
     }
 
-    /**
-     * Register any package services.
-     *
-     * @return void
-     */
-    public function register() : void
+    public function requestIDMiddlewarePriority() : void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/laravel-project-tools.php', 'laravel-project-tools');
-
-        // Register the service the package provides.
-        $this->app->singleton('laravel-project-tools', function ($app) {
-            return new LaravelProjectTools;
-        });
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides() : array
-    {
-        return [ 'laravel-project-tools' ];
+        try {
+            $kernel = $this->app->make(Kernel::class);
+            $kernel->pushMiddleware(RequestIDMiddleware::class);
+        } catch (BindingResolutionException $e) {
+        }
     }
 
     /**
@@ -135,5 +99,34 @@ class LaravelProjectToolsServiceProvider extends ServiceProvider
 
         // Registering package commands.
         // $this->commands([]);
+    }
+
+    /**
+     * Register any package services.
+     *
+     * @return void
+     */
+    public function register() : void
+    {
+        $this->mergeConfigFrom(__DIR__ . '/../config/laravel-project-tools.php', 'laravel-project-tools');
+
+        // Register the service the package provides.
+        $this->app->singleton('laravel-project-tools', function ($app) {
+            return new LaravelProjectTools;
+        });
+
+        $this->app->bind(RequestIDBuildInterface::class, function () {
+            return new RequestIDBuildService();
+        });
+    }
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides() : array
+    {
+        return [ 'laravel-project-tools' ];
     }
 }
