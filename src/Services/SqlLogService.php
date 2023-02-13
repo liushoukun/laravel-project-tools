@@ -19,11 +19,16 @@ class SqlLogService
         DB::listen(static function ($query) use ($channel) {
             try {
                 $sql = str_replace("?", "'%s'", $query->sql);
-                $log = vsprintf($sql, $query->bindings ?? []);
+                $sql = vsprintf($sql, $query->bindings ?? []);
             } catch (Throwable $e) {
-                $log = $query->sql;
+                $sql = $query->sql;
             }
-            Log::channel($channel)->debug('sql:' . $log . ' time:' . $query->time);
+
+            $data = [
+                'time'           => $query->time,
+                'connectionName' => $query->connectionName,
+            ];
+            Log::channel($channel)->debug($sql, $data);
         });
 
     }

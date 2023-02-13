@@ -9,7 +9,7 @@ return [
 
     // 日志服务
     'sql-log'    => [
-        'channel' => null
+        'channel' => 'sql',
 
     ],
     // 请求ID 服务
