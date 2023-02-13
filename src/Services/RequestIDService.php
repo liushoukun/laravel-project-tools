@@ -19,10 +19,10 @@ class RequestIDService
      * 字段名称
      * @var string
      */
-    protected static string $fieldName             = 'X-Request-Id';
+    public static string           $fieldName             = 'X-Request-Id';
     public RequestIDBuildInterface $requestIDBuild;
-    protected string        $requestID;
-    protected bool          $injectionResponseJson = true;
+    protected string               $requestID;
+    protected bool                 $injectionResponseJson = true;
 
     public function __construct(RequestIDBuildInterface $requestIDBuild)
     {
@@ -49,10 +49,7 @@ class RequestIDService
      */
     public function middlewareHandle(Request $request, Closure $next) : Response
     {
-
-        return $this->buildID($request)
-                    ->withLogContext()
-                    ->withResponse($next($request));
+        return $this->buildID($request)->withLogContext()->withResponse($next($request));
     }
 
     protected function withResponse(Response $response) : Response
@@ -90,6 +87,7 @@ class RequestIDService
     protected function buildID(Request $request) : RequestIDService
     {
         $this->requestID = $this->requestIDBuild->build($request);
+        $request->headers->set(self::$fieldName, $this->requestID);
         return $this;
     }
 
