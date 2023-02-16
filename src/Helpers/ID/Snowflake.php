@@ -58,7 +58,7 @@ class Snowflake
     }
 
 
-    private static $self = null;
+    private static self|null $self = null;
 
     public static function getInstance($workerId, $datacenterId) : ?Snowflake
     {
