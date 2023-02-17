@@ -12,12 +12,10 @@
     "homepage": "https://github.com/liushoukun/laravel-project-tools",
     "keywords": ["Laravel", "LaravelProjectTools"],
     "require": {
-        "illuminate/support": "~9",
+        "illuminate/contracts": "^9.0|^10.0",
         "jenssegers/agent": "^2.6"
     },
     "require-dev": {
-        "phpunit/phpunit": "~9.0",
-        "orchestra/testbench": "~7"
     },
     "autoload": {
         "psr-4": {
