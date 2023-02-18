@@ -2,25 +2,19 @@
 
 namespace Liushoukun\LaravelProjectTools\Exceptions;
 
-class InvalidArgumentException extends AppRuntimeException
+interface ExceptionCustomCodePrefixInterface
 {
+
     /**
      * 自定义领域错误码前缀
      * @return int
      */
-    public function getDomainCode() : int
-    {
-        return 10;
-    }
+    public function getDomainCode() : int;
+
 
     /**
      * 自定义服务错误码前缀
      * @return int
      */
-    public function getServiceCode() : int
-    {
-        return 10;
-    }
-
-
+    public function getServiceCode() : int;
 }
