@@ -9,6 +9,16 @@ class InputHelper
 
 
     /**
+     * 转换为LIST
+     * @param mixed $input
+     * @return array
+     */
+    public static function toList(mixed $input)
+    {
+        return array_values(self::toArray($input));
+    }
+
+    /**
      * 转换为数组
      * @param mixed $input
      * @return array
@@ -20,13 +30,11 @@ class InputHelper
         }
         if (is_string($input)) {
             try {
-                json_decode($input, true, 512, JSON_THROW_ON_ERROR);
+                return json_decode($input, true, 512, JSON_THROW_ON_ERROR);
             } catch (Throwable $throwable) {
                 return [];
             }
-
         }
-
         return [];
     }
 
