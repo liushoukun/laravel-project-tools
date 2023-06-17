@@ -4,14 +4,13 @@ namespace Liushoukun\LaravelProjectTools\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Liushoukun\LaravelProjectTools\Services\RequestIDService;
-use Symfony\Component\HttpFoundation\Response;
+use Liushoukun\LaravelProjectTools\Http\Requests\RequestIDService;
 
 class RequestIDMiddleware
 {
-    public function handle(Request $request, Closure $next) : Response
+    public function handle(Request $request, Closure $next)
     {
-        return app(RequestIDService::class)->middlewareHandle($request, $next);
+        return RequestIDService::middlewareHandle($request, $next);
     }
 
 

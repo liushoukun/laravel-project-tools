@@ -11,7 +11,7 @@ class LaravelProjectTools
      * @param array $parameters
      * @return ClientInfo|null
      */
-    public static function getClientInfo(array $parameters = []) : ?ClientInfo
+    public function getClientInfo(array $parameters = []) : ?ClientInfo
     {
         return collect($parameters)->first(function ($parameter) {
             if ($parameter instanceof ClientInfo) {

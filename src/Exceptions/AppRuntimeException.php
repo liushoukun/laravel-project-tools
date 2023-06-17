@@ -21,52 +21,34 @@ use Throwable;
  * @const  SERVICE_CODE
  * @property array $errorList 错误列表
  */
-abstract class AppRuntimeException extends RuntimeException implements HttpExceptionInterface, ExceptionCustomCodePrefixInterface
+abstract class AppRuntimeException extends RuntimeException implements HttpExceptionInterface
 {
 
     // 通用错误码
 
-    protected array $errors;
-    protected int   $statusCode;
-    protected array $headers;
-    protected mixed $data;
+    protected array     $errors;
+    protected int       $statusCode;
+    protected array     $headers;
+    protected mixed     $data;
+    public static array $errorList = [];
 
 
-    public function __construct(string $message = "", int $code = 99, array $errors = [], int $statusCode = 400, array $headers = [], mixed $data = null, ?Throwable $previous = null)
+    public function __construct($message = "", $code = 1, array $errors = [], int $statusCode = 400, array $headers = [], mixed $data = null, ?Throwable $previous = null)
     {
+
         parent::__construct($message, $this->formatCode($code), $previous);
         $this->errors     = $errors;
         $this->headers    = $headers;
         $this->statusCode = $statusCode;
         $this->data       = $data;
-        // 校验设置
-        $this->validateCustomCodePrefix();
     }
 
-    /**
-     * 验证自定义代码签注
-     * @return void
-     */
-    private function validateCustomCodePrefix() : void
+    public function formatCode($code) : string
     {
-        $domainCode  = $this->getDomainCode();
-        $serviceCode = $this->getServiceCode();
-        $min         = 10;
-        $max         = 99;
-        if ($domainCode < $min || $domainCode > $max) {
-            throw new RuntimeException('DOMAIN_CODE 必须在是两位数');
-        }
-        if ($serviceCode < $min || $serviceCode > $max) {
-            throw new RuntimeException('SERVICE_CODE 必须在是两位数');
-        }
-
-    }
-
-    public function formatCode(int $code) : int
-    {
-        $domainCode  = $this->getDomainCode();
-        $serviceCode = $this->getServiceCode();
-        return (int)($domainCode . $serviceCode . $code);
+        $objClass     = new ReflectionClass($this);
+        $businessCode = $objClass->getConstant('BUSINESS_CODE') !== false ? $objClass->getConstant('BUSINESS_CODE') : null;
+        $serviceCode  = $objClass->getConstant('SERVICE_CODE') !== false ? $objClass->getConstant('SERVICE_CODE') : null;
+        return (string)((string)$businessCode . (string)$serviceCode . $code);
     }
 
 

@@ -3,6 +3,7 @@
 namespace Liushoukun\LaravelProjectTools\Http;
 
 use Illuminate\Http\JsonResponse;
+use Liushoukun\LaravelProjectTools\Http\Resources\Json\JsonResource;
 
 trait ResponseJson
 {
@@ -13,11 +14,10 @@ trait ResponseJson
      * @param string $message
      * @return JsonResponse
      */
-    public static function success(mixed $data = null, string $message = 'ok') : JsonResponse
+    public static function successJson(mixed $data = null, string $message = 'ok') : JsonResponse
     {
-        return ResponseJsonService::success($data, $message);
+        return ResponseJsonService::responseJson($data, $message, 0);
     }
-
 
     /**
      * 失败响应
@@ -28,9 +28,9 @@ trait ResponseJson
      * @param mixed $data
      * @return JsonResponse
      */
-    public static function error(string $message = 'error', int|string $code = 1, int $statusCode = 400, array $errors = [], mixed $data) : JsonResponse
+    public static function errorJson(string $message = 'error', int|string $code = 1, int $statusCode = 400, array $errors = [], mixed $data) : JsonResponse
     {
-        return ResponseJsonService::error($message, $code, $statusCode, $errors, $data);
+        return ResponseJsonService::responseJson($data, $message, $code, $errors)->setStatusCode($statusCode);
     }
 
 

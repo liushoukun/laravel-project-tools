@@ -9,39 +9,65 @@ use Throwable;
 
 class ResponseJsonService
 {
+
+
     /**
-     * 成功响应
-     * @param mixed|null $data
-     * @param string $message
-     * @return JsonResponse
+     * The "data" wrapper that should be applied.
+     *
+     * @var string|null
      */
-    public static function success(mixed $data = null, string $message = 'ok') : JsonResponse
+    public static $wrap = 'data';
+
+    /**
+     * Set the string that should wrap the outer-most resource array.
+     *
+     * @param string $value
+     * @return void
+     */
+    public static function wrap(string $value)
     {
-        return response()->json(self::wrapData($data, $message, 0));
+        static::$wrap = $value;
+    }
+
+    public static function wrapper()
+    {
+        return self::$wrap;
     }
 
     /**
-     * 失败响应
-     * @param string $message
-     * @param int|string $code
-     * @param int $statusCode
-     * @param array $errors
-     * @param mixed $data
-     * @return JsonResponse
+     * Disable wrapping of the outer-most resource array.
+     *
+     * @return void
      */
-    public static function error(string $message = 'error', int|string $code = 1, int $statusCode = 400, array $errors = [], mixed $data) : JsonResponse
+    public static function withoutWrapping()
     {
-        return response()->json(self::wrapData($data, $message, $code, $errors));
+        static::$wrap = null;
     }
 
-    private static function wrapData(mixed $data, string $message, int|string $code, array $errors = []) : array
+
+    public static function responseJson(mixed $data, string $message, int|string $code, array $errors = []) : JsonResponse
     {
-        return [
-            'data'    => $data,
-            'code'    => $code,
-            'message' => $message,
-            'errors'  => $errors,
-        ];
+        return new JsonResponse(self::wrapData($data, $message, $code, $errors));
+    }
+
+    public static function wrapData(mixed $data, string $message, int|string $code, array $errors = []) : array
+    {
+
+        if (self::wrapper()) {
+            $data = [ self::$wrap => $data ];
+        }
+        return array_merge_recursive($data, self::additional($code, $message, $errors));
+
+    }
+
+
+    public static function additional(int|string $code = 0, string $message = '', array|null $errors = []) : array
+    {
+        $data            = [];
+        $data['code']    = $code;
+        $data['message'] = $message;
+        $data['errors']  = $errors;
+        return $data;
     }
 
 

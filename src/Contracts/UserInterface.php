@@ -2,7 +2,7 @@
 
 namespace Liushoukun\LaravelProjectTools\Contracts;
 
-interface User
+interface UserInterface
 {
     /**
      * 用户类型
@@ -18,10 +18,17 @@ interface User
 
 
     /**
-     * 所属人
-     * @return User|null
+     * 获取昵称
+     * @return string|null
      */
-    public function getOwner() : User|null;
+    public function getNickname() : ?string;
+
+
+    /**
+     * 获取头像
+     * @return string|null
+     */
+    public function getAvatar() : ?string;
 
 
 }
